@@ -83,6 +83,10 @@ extension ViewController: UITableViewDataSource {
              Nuke.loadImage(with: url, into: cell.customImageView)
 
         }
+        // tableView.rowHeight = UITableView.automaticDimension
+        cell.customLabel.numberOfLines = 0
+        cell.customLabel.lineBreakMode = .byWordWrapping
+
         return cell
     }
     
