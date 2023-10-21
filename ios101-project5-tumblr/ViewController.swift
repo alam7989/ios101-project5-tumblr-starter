@@ -10,14 +10,15 @@ class ViewController: UIViewController {
 
     
     @IBOutlet weak var tableView: UITableView!
+    var blog_list: [Post] = [];
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = self
 
         
         fetchPosts()
     }
-
 
 
     func fetchPosts() {
@@ -50,6 +51,10 @@ class ViewController: UIViewController {
                     for post in posts {
                         print("🍏 Summary: \(post.summary)")
                     }
+                    
+                    self?.blog_list = posts
+                    // Reload the table view to display the data
+                    self?.tableView.reloadData()
                 }
 
             } catch {
@@ -58,4 +63,28 @@ class ViewController: UIViewController {
         }
         session.resume()
     }
+}
+
+extension ViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return blog_list.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "Custom Cell") as? CustomTableViewCell else {
+            fatalError("Cell not found")
+        }
+        let post = blog_list[indexPath.row]
+        cell.customLabel.text = post.summary
+        // Get the first photo in the post's photos array
+        if let photo = post.photos.first {
+              let url = photo.originalSize.url
+              // Load the photo in the image view via Nuke library
+             Nuke.loadImage(with: url, into: cell.customImageView)
+
+        }
+        return cell
+    }
+    
+    
 }
